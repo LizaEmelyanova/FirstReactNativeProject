@@ -1,41 +1,41 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, SafeAreaView, Button, Alert, Image, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, View, FlatList, Text } from 'react-native';
+import Header from './components/Header';
+import ListItem from './components/ListItem';
+import Form from './components/Form';
+import { useState } from 'react';
 
 export default function App() {
-
-  const handleTextPress = () => console.log('Text pressed')
-  const handleButtonPress = () => Alert.alert('Hello', 'Main message', [
-    {text: 'Да', onPress: () => console.log('Yes button')},
-    {text: 'Отмена', onPress: () => console.log('No button')}
+  const [listOfItems, setListOfItems] = useState([
+    {text: 'Купить молоко', key: '1'},
+    {text: 'Помыть машину', key: '2'},
+    {text: 'Купить картошку', key: '3'},
+    {text: 'Стать миллионером', key: '4'},
   ])
 
-  const handleButtonPress2 = () => Alert.prompt('Hello', 'Main message', text => console.log(text))
+  const addHandler = (text) => {
+    setListOfItems([
+      {text: text, key: Math.random().toString(36).substring(7)},
+      ...listOfItems
+    ])
+  }
+
+  const deleteHandler = (key) => {
+    setListOfItems(listOfItems.filter(item => item.key !== key))
+  }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text numberOfLines={1} style={styles.text} onPress={handleTextPress}>Привет!{'\n'}Привет</Text>
-      <Button title='Нажми на меня' color='red' onPress={handleButtonPress} />
-      <Button title='Кнопка 2' color='red' onPress={handleButtonPress2} />
-
-      <TouchableWithoutFeedback onPress={handleButtonPress}>
-        <Image blurRadius={2} source={{
-          width: 200,
-          height: 150,
-          uri: 'https://avatars.mds.yandex.net/i?id=207777aadf6a147bdd6ec7e3cbca01ee_l-5233360-images-thumbs&n=13'
-        }} />
-      </TouchableWithoutFeedback>
-
-      <StatusBar style="auto" />
-    </SafeAreaView>
+    <View>
+      <Header />
+      <Form addHandler={addHandler} />
+      <View>
+        <FlatList data={listOfItems} renderItem={({ item }) => (
+          <ListItem el={item} deleteHandler={deleteHandler} />
+        )} />
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  text: {
-    color: 'red'
-  },
+  
 });
